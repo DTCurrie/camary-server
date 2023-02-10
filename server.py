@@ -57,6 +57,11 @@ async def main():
 
     time.sleep(5)
 
+    print('move to 0')
+
+    await servo1.move(0)
+    await servo2.move(0)
+
     await robot.close()
 
 if __name__ == '__main__':
