@@ -4,6 +4,8 @@ from viam.robot.client import RobotClient
 from viam.rpc.dial import Credentials, DialOptions
 from viam.components.servo import Servo
 
+degs = [0, 15, 30, 45, 60, 75, 90]
+
 async def connect():
     creds = Credentials(
         type='robot-location-secret',
@@ -14,18 +16,10 @@ async def connect():
     )
     return await RobotClient.at_address('camary-main.g725lybjsa.viam.cloud', opts)
 
-async def move_to_start(servo):
-    await servo.move(0)
-    await asyncio.sleep(1.5)
+async def move_to_deg(servo, deg):
+    await servo.move(deg)
+    await asyncio.sleep(5)
     pos = await servo.get_position()
-    print(f'move to start pos: {pos}')
-
-async def move_to_end(servo):
-    await servo.move(90)
-    await asyncio.sleep(2)
-    pos = await servo.get_position()
-    print(f'move to end pos: {pos}')
-
 
 async def main():
     robot = await connect()
@@ -33,24 +27,22 @@ async def main():
     servo1 = Servo.from_robot(robot, "servo-1")
     servo2 = Servo.from_robot(robot, "servo-2")
 
-    await move_to_start(servo1)
-    await move_to_start(servo2)
+    await move_to_deg(servo1, 0)
+    await move_to_deg(servo2, 0)
     
     errored = False
 
     while not errored:
         try:
-            await move_to_end(servo1)
-            await move_to_end(servo2)
-
-            await move_to_start(servo1)
-            await move_to_start(servo2)
+            for deg in degs:
+                await move_to_deg(servo1, deg)
+                await move_to_deg(servo2, deg)
         except:
             print("An exception occurred")
             errored = True
     
-    await move_to_start(servo1)
-    await move_to_start(servo2)
+    await move_to_deg(servo1, 0)
+    await move_to_deg(servo2, 0)
 
     await servo1.stop()
     await servo2.stop()
