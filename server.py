@@ -5,7 +5,6 @@ from viam.robot.client import RobotClient
 from viam.rpc.dial import Credentials, DialOptions
 from viam.components.servo import Servo
 
-
 async def connect():
     creds = Credentials(
         type='robot-location-secret',
@@ -22,45 +21,42 @@ async def main():
     servo1 = Servo.from_robot(robot, "servo-1")
     servo2 = Servo.from_robot(robot, "servo-2")
 
-    print('move to 0')
-
     await servo1.move(0)
     await servo2.move(0)
 
-    time.sleep(5)
+    await servo1.stop()
+    await servo2.stop()
+    
+    time.sleep(3)
 
-    print('move to 10')
+    errored = False
 
-    await servo1.move(10)
-    await servo2.move(10)
+    while not errored:
+        try:
+            await servo1.move(180)
+            await servo2.move(180)
 
-    time.sleep(5)
+            await servo1.stop()
+            await servo2.stop()
 
-    print('move to 20')
+            time.sleep(3)
 
-    await servo1.move(20)
-    await servo2.move(20)
+            await servo1.move(0)
+            await servo2.move(0)
 
-    time.sleep(5)
+            await servo1.stop()
+            await servo2.stop()
 
-    print('move to 30')
-
-    await servo1.move(30)
-    await servo2.move(30)
-
-    time.sleep(5)
-
-    print('move to 40')
-
-    await servo1.move(40)
-    await servo2.move(40)
-
-    time.sleep(5)
-
-    print('move to 0')
-
+            time.sleep(3)
+        except:
+            print("An exception occurred")
+            errored = True
+    
     await servo1.move(0)
     await servo2.move(0)
+
+    await servo1.stop()
+    await servo2.stop()
 
     await robot.close()
 
