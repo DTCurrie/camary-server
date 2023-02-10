@@ -1,4 +1,5 @@
 import asyncio
+import time
 
 from viam.robot.client import RobotClient
 from viam.rpc.dial import Credentials, DialOptions
@@ -18,17 +19,43 @@ async def connect():
 async def main():
     robot = await connect()
 
-    print('Resources:')
-    print(robot.resource_names)
-
     servo1 = Servo.from_robot(robot, "servo-1")
     servo2 = Servo.from_robot(robot, "servo-2")
 
-    s1Pos = await servo1.get_position()
-    s2Pos = await servo2.get_position()
+    print('move to 0')
 
-    print(f'Servo 1 Position: {s1Pos}')
-    print(f'Servo 2 Position: {s2Pos}')
+    await servo1.move(0)
+    await servo2.move(0)
+
+    time.sleep(5)
+
+    print('move to 10')
+
+    await servo1.move(10)
+    await servo2.move(10)
+
+    time.sleep(5)
+
+    print('move to 20')
+
+    await servo1.move(20)
+    await servo2.move(20)
+
+    time.sleep(5)
+
+    print('move to 30')
+
+    await servo1.move(30)
+    await servo2.move(30)
+
+    time.sleep(5)
+
+    print('move to 40')
+
+    await servo1.move(40)
+    await servo2.move(40)
+
+    time.sleep(5)
 
     await robot.close()
 
